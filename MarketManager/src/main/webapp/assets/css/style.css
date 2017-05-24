@@ -1,0 +1,54 @@
+
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.header {
+    background-color: #2aabd2;
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.2);
+    height: 100px;
+}
+
+.footer {
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.2);
+    height: 100px;
+}
+
+.login {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 500px;
+    height: 300px;
+    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.2);
+    border-color: #ccc;
+    padding: 20px 50px 0 50px;
+}
+
+.login h1 {
+    color: #000;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 10px;
+    outline: none;
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.nav-container {
+    padding: 0;
+    border-right: solid silver 1px;
+}
+.nav-container .nav-head {
+    height: 100px;
+    background-color: #2aabd2;
+}

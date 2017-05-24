@@ -1,0 +1,70 @@
+###登录
+POST http://localhost:8081/api/admin/login
+Content-Type: application/json
+
+{
+    "account":"admin",
+    "password":"admin"
+}
+
+###注销
+GET http://localhost:8081/api/admin/logout
+
+###注册
+POST http://localhost:8081/api/admin/signin
+Content-Type: application/json
+
+{
+    "account":"tjliqy",
+    "password":"pppppp",
+    "name":"haha",
+    "position":"1"
+}
+
+
+###获取当前用户
+GET http://localhost:8081/api/admin/user
+
+###采购商品
+POST http://localhost:8081/api/goods/purchase
+Content-Type: application/json
+
+{
+    "name":"pineapple",
+    "brand":"apple",
+    "prize":3,
+    "quantity":10,
+    "type":2,
+    "num":12,
+    "cost":20,
+    "origin":"23",
+    "shelfLife":"2017-10-22"
+}
+
+###销售商品
+POST http://localhost:8081/api/goods/sell
+Content-Type: application/json
+
+{
+    "id":4,
+    "num":2
+}
+
+###搜索商品
+GET http://localhost:8081/api/goods/search?name=apple
+
+###查看商品详情
+GET http://localhost:8081/api/goods/detail?id=4
+
+###上\下架某个商品
+POST http://localhost:8081/api/goods/toggleSelling
+Content-Type: application/json
+
+{
+    "id":4
+}
+
+###
+GET http://localhost:8081/api/log?minTime=2017-04-07&larTime=2017-05-08
+###
+GET http://localhost:8081/api/log/list

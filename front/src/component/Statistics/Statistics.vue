@@ -1,0 +1,210 @@
+<template>
+    <div>
+        <div class="tile is-ancestor">
+            <div class="tile is-vertical">
+                <div class="tile is-child">
+                    <div class="box">
+                        <e-charts :options="polar" ref="chart" auto-resize></e-charts>
+                    </div>
+                </div>
+                <div class="tile">
+                    <div class="tile is-parent">
+                        <div class="box tile">
+                            <e-charts :options="optionNum" auto-resize></e-charts>
+                        </div>
+                    </div>
+                    <div class="tile is-parent">
+                        <div class="box tile is-child">
+                            <e-charts :options="optionCost" auto-resize></e-charts>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-parent">
+                    <div class="box">
+                        <select-level :conditions="conditions" :type="'field'" @search="search"></select-level>
+                        <a class="button is-fullwidth" style="margin-top: 10px" @click="excel">输出为Excel</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import SelectLevel from '../layout/SelectLevel';
+    import ECharts from 'vue-echarts/components/ECharts.vue';
+    import 'echarts'
+
+    export default{
+        components: {
+            SelectLevel,
+            ECharts
+        },
+        data() {
+
+            return {
+                logList: Array,
+                conditions: [
+                    {
+                        name: '种类', param: 'type', value: "", type: "select", select: [
+                        {name: '服装', value: 1},
+                        {name: '食品', value: 2}
+                    ]
+                    },
+                    {name: '时间范围', minParam: 'minTime', larParam: 'larTime', value: "", type: "time"},
+                ],
+
+                polar: {
+                    title: {
+                        text: '月统计图'
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {},
+                            dataZoom: {}
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['销售额', '进货成本']
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: []
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '销售额',
+                            type: 'line',
+                            areaStyle: {normal: {}},
+                            data: []
+                        },
+                        {
+                            name: '进货成本',
+                            type: 'line',
+                            areaStyle: {normal: {}},
+                            data: []
+                        }
+                    ]
+                },
+                optionNum: {
+                    title: {
+                        text: '销量'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['销量']
+                    },
+                    xAxis: {
+                        data: []
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: '销量',
+                            type: 'bar',
+                            data: []
+                        }
+
+                    ]
+                },
+                optionCost: {
+                    title: {
+                        text: '销售额'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['销售额']
+                    },
+                    xAxis: {
+                        data: []
+                    },
+                    yAxis: {},
+                    series: [
+                        {
+                            name: '销售额',
+                            type: 'bar',
+                            data: []
+                        }
+
+                    ]
+                },
+                minTime: '',
+                larTime: ''
+            }
+        },
+        methods: {
+            search(params) {
+                let url = '/api/log/list?1=1';
+                if (params) {
+                    this.minTime = params.minTime;
+                    this.larTime = params.larTime;
+                    url += params.paramUrl + '&minTime=' + params.minTime + '&larTime=' + params.larTime;
+                }
+                this.$http.get(url).then(function (res) {
+                    res = res.body;
+                    if (res.errno === -1) {
+                        this.logList = res.data;
+                        this.polar.xAxis[0].data = res.monthList;
+                        this.polar.series[0].data = res.monthSell;
+                        this.polar.series[1].data = res.monthPurchase;
+                        this.optionNum.xAxis.data = res.goodNames;
+                        this.optionCost.xAxis.data = res.goodNames;
+                        this.optionNum.series[0].data = res.goodNums;
+                        this.optionCost.series[0].data = res.goodCost;
+                    }
+                })
+            },
+            excel() {
+                let url = '/api/log/excel?1=1';
+                url += '&minTime=' + this.minTime + '&larTime=' + this.larTime;
+
+                window.open(url);
+//                this.$http.get(url).then(function (res) {
+//                    res = res.body;
+//                })
+            },
+            month(stamp){
+                let time = new Date(parseInt(stamp));
+                let y = time.getFullYear();
+                let m = time.getMonth() + 1;
+                let d = time.getDate();
+
+                return y + '.' + add0(m);
+            }
+        },
+        created(){
+            this.$nextTick(() => {
+                this.search();
+            })
+        }
+    }
+
+</script>
+
+<style lang="scss">
+</style>
