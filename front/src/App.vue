@@ -23,15 +23,16 @@
             }
         },
         created() {
-            this.$http.get('/api/admin/user').then(function (response) {
-                response = response.body;
-                if (response.errno === -1) {
-                    this.user = response.user;
-                    this.$router.push('/admin');
-                } else {
-                    this.$router.push('/login');
-                }
-            });
+            this.$router.push('/admin/statistics');
+//            this.$http.get('/api/admin/user').then(function (response) {
+//                response = response.body;
+//                if (response.errno === -1) {
+//                    this.user = response.user;
+//                    this.$router.push('/admin');
+//                } else {
+//                    this.$router.push('/login');
+//                }
+//            });
         }
     }
 </script>

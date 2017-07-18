@@ -2,20 +2,12 @@ package com.tjliqy.server;
 
 import com.jfinal.aop.Before;
 import com.jfinal.kit.JsonKit;
-import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.tjliqy.exception.BizException;
-import com.tjliqy.model.Clothes;
-import com.tjliqy.model.Food;
 import com.tjliqy.model.Goods;
 import com.tjliqy.model.Log;
 
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -31,56 +23,32 @@ public class GoodService {
 
     @Before(Tx.class)
     public Goods purchase(HashMap params) {
+        Optional<Object> purchaseOptional = Optional.ofNullable(params.get("purchase"));
         if (params.get("id") != null) {
-            int purchaseNum = Integer.valueOf((String) params.get("num"));
             Optional<Goods> optional = Optional.ofNullable(Goods.dao.findById(params.get("id")));
             if (optional.isPresent()) {
-                Goods goods = optional.get();
-                goods.setNum(purchaseNum + optional.get().getNum());
+                params.remove("sell");
+                params.remove("purchase");
+                Goods goods = JsonKit.parse(JsonKit.toJson(params), Goods.class);
+                int oldQuantity = optional.get().getQuantity();
+                if (purchaseOptional.isPresent()){
+                    int purchaseNum = Integer.valueOf((String) purchaseOptional.get());
+                    goods.setQuantity(purchaseNum + oldQuantity);
+                    addLog(goods, purchaseNum, PURCHASE_TYPE);
+                }else {
+                    goods.setQuantity(oldQuantity);
+                }
                 goods.update();
-                addLog(goods, purchaseNum, PURCHASE_TYPE);
                 return goods;
             } else {
                 throw new BizException("没有这个商品", 404);
             }
         } else {
-            Goods goods = new Goods();
-            if (params.get("type").equals(CLOTHES_TYPE)) {
-                Clothes clothes = new Clothes();
-                clothes.setColor((String) params.get("color"));
-                clothes.setSize((String) params.get("size"));
-                clothes.setCrowd((String) params.get("crowd"));
-                params.remove("color");
-                params.remove("size");
-                params.remove("crowd");
-                params.remove("shelf_life");
-                params.remove("origin");
-                goods = JsonKit.parse(JsonKit.toJson(params), Goods.class);
-                goods.save();
-                clothes.setId(goods.getId());
-                clothes.save();
-            } else if (params.get("type").equals(FOOD_TYPE)) {
-                Food food = new Food();
-                DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
-                try {
-                    food.setShelfLife(df.parse((String) params.get("shelf_life")));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                food.setOrigin((String) params.get("origin"));
-                params.remove("color");
-                params.remove("size");
-                params.remove("crowd");
-                params.remove("shelf_life");
-                params.remove("origin");
-                goods = JsonKit.parse(JsonKit.toJson(params), Goods.class);
-                goods.save();
-                food.setId(goods.getId());
-                food.save();
-            } else {
-                throw new BizException();
-            }
-            addLog(goods, goods.getNum(), PURCHASE_TYPE);
+            params.put("quantity",params.get("purchase"));
+            params.remove("purchase");
+            Goods goods = JsonKit.parse(JsonKit.toJson(params), Goods.class);
+            goods.save();
+            addLog(goods, goods.getQuantity(), PURCHASE_TYPE);
             return goods;
         }
     }
@@ -89,11 +57,11 @@ public class GoodService {
     public Goods sell(Integer goodsId, Integer num) {
         Optional<Goods> goods = Optional.ofNullable(Goods.dao.findById(goodsId));
         if (goods.isPresent()) {
-            Integer perNum = goods.get().getNum();
+            Integer perNum = goods.get().getQuantity();
             if (perNum < num) {
                 throw new BizException("没有库存", 404);
             } else {
-                goods.get().setNum(perNum - num);
+                goods.get().setQuantity(perNum - num);
                 goods.get().update();
             }
             addLog(goods.get(), num, SELL_TYPE);
@@ -114,12 +82,12 @@ public class GoodService {
         return goods.get();
     }
 
-    private void addLog(Goods goods, int num, int sellOrPurchase) {
+    private void addLog(Goods goods, long num, int sellOrPurchase) {
         Log log = new Log();
         log.setGoodId(goods.getId());
-        log.setCost(goods.getCost());
+        log.setCost(goods.getPrize());
         log.setNum(num);
-        log.setTotalCost(goods.getCost().multiply(BigDecimal.valueOf(num)));
+        log.setTotalCost(goods.getPrize().multiply(BigDecimal.valueOf(num)));
         log.setType(sellOrPurchase);
         log.save();
     }

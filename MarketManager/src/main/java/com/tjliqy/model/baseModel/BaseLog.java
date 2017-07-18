@@ -57,11 +57,11 @@ public abstract class BaseLog<M extends BaseLog<M>> extends Model<M> implements 
 		return get("type");
 	}
 
-	public void setNum(java.lang.Integer num) {
+	public void setNum(java.lang.Long num) {
 		set("num", num);
 	}
 
-	public java.lang.Integer getNum() {
+	public java.lang.Long getNum() {
 		return get("num");
 	}
 

@@ -59,11 +59,13 @@
                         <span v-show="condition.value" class="tag is-success is-medium">{{condition.name}}:{{condition.showValue}}
                         <button class="delete is-small" @click="condition.value=&quot;&quot;"></button></span>
                 </div>
+                <a class="button" @click="search">开始搜索</a>
+
             </div>
 
             <!-- Right side -->
             <div class="level-right">
-                <a class="button" @click="search">开始搜索</a>
+                <!--<a class="button" @click="search">开始搜索</a>-->
             </div>
         </nav>
         <div v-show="type === 'field'">
@@ -218,7 +220,7 @@
                     case INPUT:
                         if (this.inputValue !== "") {
                             condition.value = this.inputValue;
-                            condition.showValue = this.inputValue;
+                            condition.showValue = condition.value;
                         }
                         break;
                     case SELECT:
@@ -282,11 +284,17 @@
             }
         },
         created() {
+//            let me = this;
             this.resConditions = this.conditions;
+//            this.resConditions.forEach(function (condition) {
+//                me.addCondition();
+//                me.selectedCondition++;
+//            });
+//            this.selectedCondition = 0;
         }
     }
 </script>
 
 <style>
-
+.content p{margin-bottom: 0 !important;}
 </style>

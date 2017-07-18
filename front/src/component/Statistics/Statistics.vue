@@ -1,35 +1,40 @@
 <template>
-    <div>
-        <div class="tile is-ancestor">
-            <div class="tile is-vertical">
-                <div class="tile is-child">
-                    <div class="box">
-                        <e-charts :options="polar" ref="chart" auto-resize></e-charts>
+    <div class="container" style="margin-top: 20px;">
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <e-charts :options="polar" ref="chart" auto-resize></e-charts>
+                </div>
+                <div class="box">
+                    <e-charts :options="optionNum" auto-resize></e-charts>
+                </div>
+            </div>
+            <div class="column is-hidden-touch">
+                <div class="box">
+                    <select-level :conditions="conditions" :type="'field'" @search="search"></select-level>
+                    <a class="button is-fullwidth" style="margin-top: 10px" @click="excel">输出为Excel</a>
+                </div>
+            </div>
+            <div class="tile">
+                <div class="tile is-vertical ">
+                    <div class="tile is-parent">
+
+                    </div>
+                    <div class="tile">
+                        <div class="tile is-parent">
+
+                        </div>
                     </div>
                 </div>
                 <div class="tile">
-                    <div class="tile is-parent">
-                        <div class="box tile">
-                            <e-charts :options="optionNum" auto-resize></e-charts>
-                        </div>
-                    </div>
-                    <div class="tile is-parent">
-                        <div class="box tile is-child">
-                            <e-charts :options="optionCost" auto-resize></e-charts>
-                        </div>
-                    </div>
+                    <article class="tile is-parent">
+
+                    </article>
                 </div>
-            </div>
-            <div class="tile is-parent">
-                <article class="tile is-parent">
-                    <div class="box">
-                        <select-level :conditions="conditions" :type="'field'" @search="search"></select-level>
-                        <a class="button is-fullwidth" style="margin-top: 10px" @click="excel">输出为Excel</a>
-                    </div>
-                </article>
             </div>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -47,13 +52,7 @@
             return {
                 logList: Array,
                 conditions: [
-                    {
-                        name: '种类', param: 'type', value: "", type: "select", select: [
-                        {name: '服装', value: 1},
-                        {name: '食品', value: 2}
-                    ]
-                    },
-                    {name: '时间范围', minParam: 'minTime', larParam: 'larTime', value: "", type: "time"},
+                    {name: '时间范围(不填则认为是当年12个月)', minParam: 'minTime', larParam: 'larTime', value: "", type: "time"},
                 ],
 
                 polar: {
@@ -113,44 +112,40 @@
                 },
                 optionNum: {
                     title: {
-                        text: '销量'
+                        text: '商品销售统计'
                     },
                     tooltip: {},
                     legend: {
-                        data: ['销量']
+                        data: ['销量', '销售额']
                     },
                     xAxis: {
                         data: []
                     },
-                    yAxis: {},
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '销量'
+                        },
+                        {
+                            type: 'value',
+                            name: '销售额',
+                            axisLabel: {
+                                formatter: '{value} 元'
+                            }
+                        }
+                    ],
                     series: [
                         {
                             name: '销量',
                             type: 'bar',
                             data: []
-                        }
-
-                    ]
-                },
-                optionCost: {
-                    title: {
-                        text: '销售额'
-                    },
-                    tooltip: {},
-                    legend: {
-                        data: ['销售额']
-                    },
-                    xAxis: {
-                        data: []
-                    },
-                    yAxis: {},
-                    series: [
+                        },
                         {
                             name: '销售额',
                             type: 'bar',
+                            yAxisIndex: 1,
                             data: []
                         }
-
                     ]
                 },
                 minTime: '',
@@ -173,9 +168,10 @@
                         this.polar.series[0].data = res.monthSell;
                         this.polar.series[1].data = res.monthPurchase;
                         this.optionNum.xAxis.data = res.goodNames;
-                        this.optionCost.xAxis.data = res.goodNames;
                         this.optionNum.series[0].data = res.goodNums;
-                        this.optionCost.series[0].data = res.goodCost;
+
+                        this.optionNum.series[1].data = res.goodCost;
+
                     }
                 })
             },
@@ -207,4 +203,5 @@
 </script>
 
 <style lang="scss">
+
 </style>

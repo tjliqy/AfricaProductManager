@@ -1,6 +1,5 @@
 package com.tjliqy.controller.admin;
 
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 //import com.tjliqy.interceptor.JsonInterceptor;
 import com.jfinal.kit.HttpKit;
@@ -8,10 +7,7 @@ import com.jfinal.kit.JsonKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.tjliqy.exception.BizException;
-import com.tjliqy.model.Clothes;
 import com.tjliqy.model.Goods;
-import com.tjliqy.model.Log;
 import com.tjliqy.server.GoodService;
 import com.tjliqy.util.SearchUtil;
 
@@ -30,7 +26,6 @@ public class GoodsController extends Controller {
      *
      */
     public void purchase() {
-        Goods model = getModel(Goods.class);
         GoodService goodService = enhance(GoodService.class);
         HashMap params = JsonKit.parse(HttpKit.readData(getRequest()), HashMap.class);
         Goods goods = goodService.purchase(params);
@@ -44,7 +39,7 @@ public class GoodsController extends Controller {
     public void sell() {
         GoodService goodService = enhance(GoodService.class);
         HashMap params = JsonKit.parse(HttpKit.readData(getRequest()), HashMap.class);
-        Goods goods = goodService.sell((Integer) params.get("id"), Integer.valueOf((String) params.get("num")));
+        Goods goods = goodService.sell((Integer) params.get("id"), Integer.valueOf((String) params.get("quantity")));
         setAttr("goods",goods);
     }
 
@@ -55,7 +50,7 @@ public class GoodsController extends Controller {
         util.addStrCondition("brand",getPara("brand"));
         util.addIntCondition("prize",getPara("prize"));
         util.addIntCondition("type",getPara("type"));
-        util.addIntCondition("num",getPara("cost"));
+        util.addIntCondition("quantity",getPara("cost"));
         util.addIntCondition("selling",getPara("selling",getPara("selling")));
         util.addIntRangeCondition("cost",getPara("minCost"),getPara("larCost"));
         util.addIntRangeCondition("prize",getPara("minPrize"),getPara("larPrize"));
@@ -79,17 +74,19 @@ public class GoodsController extends Controller {
     public void detail() {
         int id = getParaToInt("id");
         Record record;
-        record = Db.findFirst("select * from goods G,food F where G.id = ? AND F.id = ?", id, id);
-        if (record == null){
-            record = Db.findFirst("select * from goods G,clothes C where G.id = ? AND C.id = ?",id,id);
-        }
+//        record = Db.findFirst("select * from goods G,food F where G.id = ? AND F.id = ?", id, id);
+        record = Db.findFirst("select * from goods where id = ?", id);
+//
+//        if (record == null){
+//            record = Db.findFirst("select * from goods G,clothes C where G.id = ? AND C.id = ?",id,id);
+//        }
         setAttr("data",record);
     }
     /**
      * todo 这个方法需要打磨。
      */
     public void list4Purchase(){
-        List<Goods> list = Goods.dao.find("select * from goods orderby num");
+        List<Goods> list = Goods.dao.find("select * from goods orderby quantity");
 
         setAttr("list",list);
     }

@@ -25,44 +25,28 @@ public abstract class BaseGoods<M extends BaseGoods<M>> extends Model<M> impleme
 		return get("name");
 	}
 
-	public void setBrand(java.lang.String brand) {
-		set("brand", brand);
-	}
-
-	public java.lang.String getBrand() {
-		return get("brand");
-	}
-
-	public void setPrize(java.lang.Integer prize) {
+	public void setPrize(java.math.BigDecimal prize) {
 		set("prize", prize);
 	}
 
-	public java.lang.Integer getPrize() {
+	public java.math.BigDecimal getPrize() {
 		return get("prize");
 	}
 
-	public void setType(java.lang.Integer type) {
+	public void setType(java.lang.String type) {
 		set("type", type);
 	}
 
-	public java.lang.Integer getType() {
+	public java.lang.String getType() {
 		return get("type");
 	}
 
-	public void setNum(java.lang.Integer num) {
-		set("num", num);
+	public void setQuantity(java.lang.Integer quantity) {
+		set("quantity", quantity);
 	}
 
-	public java.lang.Integer getNum() {
-		return get("num");
-	}
-
-	public void setCost(java.math.BigDecimal cost) {
-		set("cost", cost);
-	}
-
-	public java.math.BigDecimal getCost() {
-		return get("cost");
+	public java.lang.Integer getQuantity() {
+		return get("quantity");
 	}
 
 	public void setSelling(java.lang.Integer selling) {
@@ -71,6 +55,22 @@ public abstract class BaseGoods<M extends BaseGoods<M>> extends Model<M> impleme
 
 	public java.lang.Integer getSelling() {
 		return get("selling");
+	}
+
+	public void setNumber(java.lang.Integer number) {
+		set("number", number);
+	}
+
+	public java.lang.Integer getNumber() {
+		return get("number");
+	}
+
+	public void setUnit(java.lang.String unit) {
+		set("unit", unit);
+	}
+
+	public java.lang.String getUnit() {
+		return get("unit");
 	}
 
 }

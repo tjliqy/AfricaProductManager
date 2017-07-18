@@ -24,7 +24,7 @@
                     <td>{{good.name}}</td>
                     <td>{{good.cost}}</td>
                     <td>{{good.prize}}</td>
-                    <td>{{good.num}}</td>
+                    <td>{{good.quantity}}</td>
                     <td>{{good.brand}}</td>
                     <td>{{sellMode(good.selling)}}</td>
                     <td><a class="button modal-button" @click="openModal(good)">详情</a>
@@ -57,9 +57,9 @@
 </template>
 
 <script>
-    import GoodsModal from './GoodsModal';
+    import GoodsModal from './Goods/GoodsModal';
     import SelectLevel from './layout/SelectLevel';
-    import GoodsEditModal from './GoodsEditModal';
+    import GoodsEditModal from './Goods/GoodsEditModal';
     import Vue from 'vue'
     export default{
         components: {
@@ -164,10 +164,10 @@
                 }
                 if (good.sell === undefined) {
                     alert("请输入销售数量");
-                } else if (good.sell > good.num) {
+                } else if (good.sell > good.quantity) {
                     alert('数量不足');
                 } else {
-                    this.$http.post('/api/goods/sell', {'id': good.id, 'num': good.sell}).then(function (res) {
+                    this.$http.post('/api/goods/sell', {'id': good.id, 'quantity': good.sell}).then(function (res) {
                         res = res.body;
                         if (res.errno === -1) {
                             this.initPage(this.goodsPage.pageNumber);

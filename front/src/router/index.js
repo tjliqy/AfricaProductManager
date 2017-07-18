@@ -30,20 +30,16 @@ export default new Router({
 			children: [
 				{
                     path:'goods',
-                    component: require('../component/Goods.vue')
+                    component: require('../component/Goods/Goods.vue')
                 },
                 {
-                    path:'log',
+                    path:'log/:id',
                     component: require('../component/Log.vue')
                 },
-                {
-                    path:'buy',
-                    component: require('../component/Buy.vue')
-                },
-                {
-                    path:'sell',
-                    component: require('../component/Sell.vue')
-                },
+				{
+					path:'equipment',
+					component: require('../component/Equipment/Equipment.vue')
+				},
 				{
 					path:'statistics',
 					component: require('../component/Statistics/Statistics.vue')

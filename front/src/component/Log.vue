@@ -7,24 +7,24 @@
             <table class="table is-striped">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>商品ID</th>
+                    <th>序号</th>
+                    <th>物资/配件序号</th>
                     <th>操作类型</th>
-                    <th>采购/销售数量</th>
-                    <th>货品单价</th>
+                    <th>出/入库数量</th>
+                    <th>单价</th>
                     <th>交易总金额</th>
                     <th>更新时间</th>
-                    <th>操作</th>
+                    <!--<th>操作</th>-->
                 </tr>
                 <tr v-for="log in logPage.list">
                     <td>{{log.id}}</td>
                     <td>{{log.goodId}}</td>
-                    <td>{{log.type|typeFilter}}</td>
+                    <td>{{log.type}}</td>
                     <td>{{log.num}}</td>
                     <td>{{log.cost}}</td>
                     <td>{{log.totalCost}}</td>
-                    <td>{{log.updateTime|time}}</td>
-                    <td><a class="button modal-button" @click="openModal(log)">商品详情</a></td>
+                    <td>{{log.updateTime | time}}</td>
+                    <!--<td><a class="button modal-button" @click="openModal(log)">商品详情</a></td>-->
                 </tr>
                 </thead>
             </table>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-    import GoodsModal from './GoodsModal';
+    import GoodsModal from './Goods/GoodsModal';
     import SelectLevel from './layout/SelectLevel'
     export default{
         components: {
@@ -62,14 +62,15 @@
                 show: false,
                 currentGood: Object,
                 conditions: [
-                    {name: '商品ID', param: 'goodId', value: "", type: "input"},
+                    {name: '物资/配件序号', param: 'goodId', value: "", type: "input"},
                     {
                         name: '操作类型', param: 'type', value: "", type: "select", select: [
-                        {name: '采购', value: 4},
-                        {name: '出售', value: 3}
+                        {name: '入库', value: 4},
+                        {name: '出库', value: 3}
                     ]
                     },
-                    {name: '单价', param: 'prize', value: "",minParam: 'minPrize', larParam: 'larPrize', type: "range"},
+
+                    {name: '单价', param: 'prize', value: "", minParam: 'minPrize', larParam: 'larPrize', type: "range"},
                     {name: '时间范围', minParam: 'minTime', larParam: 'larTime', value: "", type: "time"},
                 ],
                 params: "",
@@ -98,6 +99,10 @@
             }
         },
         created() {
+            if (this.$route.params.id !== 'all') {
+//                this.conditions[0].value = this.$route.params.id;
+                this.params = "&goodId=" + this.$route.params.id;
+            }
             this.initPage(1);
         },
         filters: {
@@ -115,13 +120,6 @@
                 let s = time.getMilliseconds();
 
                 return y + '.' + add0(m) + '.' + add0(d) + ' ' + add0(h) + ':' + add0(min) + ':' + add0(s);
-            },
-            typeFilter: function (v) {
-                if (v === 4) {
-                    return '采购';
-                } else if (v === 3) {
-                    return '出售';
-                }
             }
         },
         computed: {

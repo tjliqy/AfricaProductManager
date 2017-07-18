@@ -9,7 +9,9 @@ import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
 //import com.tjliqy.controller.admin.AdminController;
+import com.tjliqy.IndexController;
 import com.tjliqy.controller.admin.AdminController;
+import com.tjliqy.controller.admin.EquipmentController;
 import com.tjliqy.controller.admin.GoodsController;
 import com.tjliqy.controller.admin.LogController;
 import com.tjliqy.interceptors.AuthInterceptor;
@@ -34,10 +36,12 @@ public class WebConfig extends JFinalConfig{
 
     public void configRoute(Routes routes) {
         routes.addInterceptor(new JsonResponse());
-        routes.addInterceptor(new AuthInterceptor());
-        routes.add("/admin",AdminController.class);
-        routes.add("/goods", GoodsController.class);
-        routes.add("/log", LogController.class);
+//        routes.addInterceptor(new AuthInterceptor());
+        routes.add("/",IndexController.class);
+        routes.add("/api/admin",AdminController.class);
+        routes.add("/api/goods", GoodsController.class);
+        routes.add("/api/equipment", EquipmentController.class);
+        routes.add("/api/log", LogController.class);
     }
 
     public void configEngine(Engine engine) {

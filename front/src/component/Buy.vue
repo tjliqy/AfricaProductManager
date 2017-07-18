@@ -24,12 +24,12 @@
                     <td>{{good.name}}</td>
                     <td>{{good.cost}}</td>
                     <td>{{good.prize}}</td>
-                    <td>{{good.num}}</td>
+                    <td>{{good.quantity}}</td>
                     <td>{{good.brand}}</td>
                     <td>{{sellMode(good.selling)}}</td>
                     <td><a class="button modal-button" @click="openModal(good)">详情</a>
                         <a class="button is-success" @click="openEditModal(good)">采购</a>
-                        <a v-show="good.num < 10" style="color:red">急需采购！</a>
+                        <a v-show="good.quantity < 10" style="color:red">急需采购！</a>
                     </td>
                 </tr>
                 </tbody>
@@ -57,9 +57,9 @@
 </template>
 
 <script>
-    import GoodsModal from './GoodsModal';
+    import GoodsModal from './Goods/GoodsModal';
     import SelectLevel from './layout/SelectLevel';
-    import GoodsEditModal from './GoodsEditModal';
+    import GoodsEditModal from './Goods/GoodsEditModal';
     import Vue from 'vue'
     export default{
         components: {
@@ -98,7 +98,7 @@
         },
         methods: {
             initPage: function (page) {
-                this.$http.get('/api/goods/search?page=' + page + this.params + "&orderCon=num&desc=false").then(function (res) {
+                this.$http.get('/api/goods/search?page=' + page + this.params + "&orderCon=quantity&desc=false").then(function (res) {
                     res = res.body;
                     if (res.errno === -1) {
                         this.goodsPage = res.data;
@@ -156,25 +156,8 @@
             search(param){
                 this.params = param.paramUrl;
                 this.initPage(1);
-            },
-            sell(good) {
-                if (good.selling === -1) {
-                    alert('该商品出去下架状态，无法销售');
-                    return;
-                }
-                if (good.sell === undefined) {
-                    alert("请输入销售数量");
-                } else if (good.sell > good.num) {
-                    alert('数量不足');
-                } else {
-                    this.$http.post('/api/goods/sell', {'id': good.id, 'num': good.sell}).then(function (res) {
-                        res = res.body;
-                        if (res.errno === -1) {
-                            this.initPage(this.goodsPage.pageNumber);
-                        }
-                    })
-                }
             }
+
         },
         created()
         {
